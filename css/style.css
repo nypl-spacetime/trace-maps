@@ -1,0 +1,106 @@
+body {
+  display: flex;
+  flex-direction: column;
+  /*justify-content: space-between;*/
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-color: #fafafa;
+}
+
+.hidden {
+  display: none;
+}
+
+body, input, button {
+  font-size: 18px;
+  font-family: monospace;
+}
+
+body, a, a:visited {
+  color: #111;
+}
+
+h1, h2, .center {
+  text-align: center;
+}
+
+h1 {
+  margin: .2em 0;
+}
+
+#oauth {
+  text-align: center;
+  padding: .5em;
+}
+
+#error span {
+  background-color: rgba(255, 30, 30, 0.9);
+  padding: 0.4em;
+  border-radius: 5px;
+  margin: 1em;
+  display: block;
+}
+
+header, footer {
+  height: 50px;
+  margin: .5em;
+}
+
+h1 {
+  display: inline;
+}
+
+#map-container {
+  position: relative;
+  width: 100%;
+  /*height: 100%;*/
+  flex: 1;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+}
+
+#slider-container {
+  border-width: 2px;
+  border-color: rgba(0, 0, 0, 0.5);
+  border-style: solid;
+  width: 30%;
+  left: calc(50% - 15%);
+  z-index: 9999;
+  position: absolute;
+  bottom: 10px;
+  margin: 0 auto;
+  background-color: white;
+  padding: .5em 1em;
+  border-radius: 20px;
+}
+
+#slider {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+button {
+  padding: .3em .5em;
+  margin-bottom: 1em;
+  border-radius: 5px;
+  border-style: solid;
+  border-width: 2px;
+  border-color: #999;
+  background-color: white;
+}
+
+#save-message {
+  color: #ff00c5;
+}
+
+.popup-feature > div {
+  border-radius: 5px;
+}
