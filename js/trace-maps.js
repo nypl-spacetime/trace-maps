@@ -25,14 +25,6 @@ var brickByBrick = BrickByBrick(API_URL, TASK_ID, collections.map(function (c) {
 function postSubmission() {
   var geojson = drawnItems.toGeoJSON()
 
-  // geojson.features.forEach(function (feature) {
-  //   feature.properties = {
-  //     fields: {
-  //       number: 4
-  //     }
-  //   }
-  // })
-
   if (selectedItem) {
     data = {
       geojson: geojson
@@ -62,6 +54,9 @@ function updateSaved (saved) {
 
   d3.select('#save')
     .attr('disabled', saved ? true : null)
+
+  d3.select('#items')
+    .attr('disabled', saved ? null : true)
 }
 
 function getItems () {
@@ -72,11 +67,16 @@ function getItems () {
       d3.select('#items').selectAll('option')
         .data(items).enter()
       .append('option')
+        .attr('disabled', function (d) {
+          if (!d.data.geometry) {
+            return true
+          }
+        })
         .attr('value', function (d) {
           return d.id
         })
         .text(function (d, i) {
-          return 'Map ' + (i + 1) //+ ' - ' + d.data.title
+          return d.data.title
         })
 
       getItem(items[0].organization.id, items[0].id)
@@ -91,6 +91,7 @@ function getItem (organizationId, id) {
     .then(function (item) {
       selectedItem = item
 
+      drawnItems.clearLayers()
       d3.selectAll('.hidden')
         .classed('hidden', false)
 
@@ -105,10 +106,25 @@ function getItem (organizationId, id) {
       if (!mapwarperLayer) {
         mapwarperLayer = L.tileLayer(selectedItem.data.tileUrl).addTo(map)
       } else {
-        mapwarperLayer.setTileUrl(selectedItem.data.tileUrl)
+        mapwarperLayer.setUrl(selectedItem.data.tileUrl)
       }
 
       map.invalidateSize()
+
+      if (selectedItem.data.geometry && selectedItem.data.geometry.coordinates && selectedItem.data.geometry.coordinates[0]) {
+        var polygon = selectedItem.data.geometry.coordinates[0]
+        map.fitBounds([
+          [
+            polygon[0][1],
+            polygon[0][0]
+          ],
+          [
+            polygon[2][1],
+            polygon[2][0]
+          ]
+        ])
+      }
+
       updateSaved(true)
     })
     .catch(function (err) {
@@ -220,13 +236,18 @@ map.on('draw:deleted', function (event) {
   updateSaved(false)
 })
 
-d3.select('#slider').on('input', function (event) {
+d3.select('#slider').on('input', function () {
   if (mapwarperLayer) {
     mapwarperLayer.setOpacity(this.value / 100)
   }
 })
 
-d3.select('#save').on('click', function (event) {
+d3.select('#items').on('change', function () {
+  var id = this.options[this.selectedIndex].value
+  getItem(ORGANIZATION_ID, id)
+})
+
+d3.select('#save').on('click', function () {
   postSubmission()
 })
 

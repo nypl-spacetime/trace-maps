@@ -14,7 +14,7 @@ body {
   display: none;
 }
 
-body, input, button {
+body, select, input, button {
   font-size: 18px;
   font-family: monospace;
 }
