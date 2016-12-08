@@ -18,12 +18,25 @@ var elements = {
   oauth: document.getElementById('oauth')
 }
 
+var geojsonStyle = {
+  color: '#ff7800',
+  weight: 5,
+  opacity: 0.65
+}
+
 var mapwarperLayer
 
 var brickByBrick = BrickByBrick(API_URL, TASK_ID, collections.map(function (c) { return c.id }), elements)
 
 function postSubmission() {
-  var geojson = drawnItems.toGeoJSON()
+  var geojson = {
+    type: 'FeatureCollection',
+    features: drawnItems.getLayers().map(function (layer) {
+      var feature = layer.toGeoJSON()
+      feature.properties = Object.assign(feature.properties, layer._geojsonProperties)
+      return feature
+    })
+  }
 
   if (selectedItem) {
     data = {
@@ -98,7 +111,7 @@ function getItem (organizationId, id) {
       if (selectedItem.submission && selectedItem.submission.data) {
         var submissionData = selectedItem.submission.data
 
-        if (submissionData.geojson) {
+        if (submissionData.geojson && submissionData.geojson.features) {
           drawnItems.addData(submissionData.geojson)
         }
       }
@@ -147,7 +160,12 @@ function bindPopup (layer) {
   var popup = document.createElement('div')
 
   var fields = selectedItem.collection.data.fields
-  var properties = layer.toGeoJSON().properties
+
+  if (!layer._geojsonProperties) {
+    layer._geojsonProperties = Object.assign({
+      fields: {}
+    }, layer.toGeoJSON().properties)
+  }
 
   var field = d3.select(popup)
       .append('table')
@@ -162,22 +180,17 @@ function bindPopup (layer) {
 
   field.append('td')
     .append('input')
+      .attr('class', 'popup-input')
       .attr('type', 'number')
       .attr('value', function (d) {
-        if (properties && properties.fields) {
-          return properties.fields[d.name]
-        }
+        return layer._geojsonProperties.fields[d.name]
       })
       .on('input', function (d) {
-        if (!layer.feature.properties.fields) {
-          layer.feature.properties.fields = {}
-        }
-
         var value = parseInt(d3.select(this).property('value'))
-        var oldValue = layer.feature.properties.fields[d.name]
+        var oldValue = layer._geojsonProperties.fields[d.name]
 
         if (value !== oldValue) {
-          layer.feature.properties.fields[d.name] = value
+          layer._geojsonProperties.fields[d.name] = value
           updateSaved(false)
         }
       })
@@ -190,12 +203,19 @@ function bindPopup (layer) {
     className: 'popup-feature'
   }, layer).setContent(popup))
 
-  // layer.on('popupclose', function (e) {
+  layer.on('popupopen', function (event) {
+    var input = event.popup._container.querySelector('.popup-input')
+    input.setSelectionRange(0, input.value.length)
+    input.focus()
+  })
+
+  // layer.on('popupclose', function (event) {
   // })
 }
 
 var drawnItems = new L.geoJson(null, {
-  onEachFeature: function (feature, layer) {
+    style: geojsonStyle,
+    onEachFeature: function (feature, layer) {
     bindPopup(layer, feature)
   }
 })
@@ -215,7 +235,7 @@ map.addControl(new L.Control.Draw({
     rectangle: false,
     polygon: {
       allowIntersection: false,
-      showArea:true
+      shapeOptions: geojsonStyle
     }
   }
 }))
