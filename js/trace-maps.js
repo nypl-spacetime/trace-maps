@@ -24,6 +24,8 @@ var geojsonStyle = {
   opacity: 0.65
 }
 
+ L.Browser.touch = false
+
 var mapwarperLayer
 
 var brickByBrick = BrickByBrick(API_URL, TASK_ID, collections.map(function (c) { return c.id }), elements)
