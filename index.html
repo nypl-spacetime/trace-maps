@@ -6,10 +6,10 @@
     <meta charset="utf-8">
     <title>Trace Maps - NYC Space/Time Directory</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="{{ site.brick-by-brick-js }}style.css">
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/leaflet.draw.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="{{ site.brick-by-brick-js }}style.css">
     <script src="{{ site.brick-by-brick-js }}fetch.js"></script>
     <script src="{{ site.brick-by-brick-js }}promise.min.js"></script>
     <script src="{{ site.brick-by-brick-js }}d3.v4.min.js"></script>
@@ -20,11 +20,16 @@
   <body>
     <div id="oauth">
     </div>
-    <header>
+    <header class="row">
       <h1>Trace Maps</h1>
       <select id="items">
       </select>
     </header>
+    <div class="row">
+      <label for="tile-url">Load map tiles from URL:</label>
+      <input type="text" id="tile-url" value="" placeholder="go to Map Warper's Export tab and copy Tiles URL">
+      <button id="load-tiles">Load</button>
+    </div>
     <div class="center error" id="error"></div>
     <div id="map-container" class="hidden">
       <div id="map">
@@ -33,7 +38,7 @@
         <input id="slider" type="range" min="0" max="100" step="1" value="100" />
       </div>
     </div>
-    <footer  class="hidden">
+    <footer class="hidden row">
       <button id="save">Save</button>
       <span id="save-message" class="hidden">
         You have unsaved data!

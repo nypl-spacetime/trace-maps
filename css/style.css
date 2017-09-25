@@ -10,6 +10,11 @@ body {
   background-color: #fafafa;
 }
 
+body,
+.leaflet-container {
+  background-color: #fafafa;
+}
+
 .hidden {
   display: none;
 }
@@ -44,9 +49,10 @@ h1 {
   display: block;
 }
 
-header, footer {
+.row {
   height: 50px;
-  margin: .5em;
+  margin: .5em auto;
+
 }
 
 h1 {
@@ -103,4 +109,8 @@ button {
 
 .popup-feature > div {
   border-radius: 5px;
+}
+
+#tile-url {
+  width: 700px;
 }

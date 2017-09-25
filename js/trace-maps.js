@@ -24,7 +24,7 @@ var geojsonStyle = {
   opacity: 0.65
 }
 
- L.Browser.touch = false
+L.Browser.touch = false
 
 var mapwarperLayer
 
@@ -154,7 +154,8 @@ var map = L.map('map', {
   maxZoom: 18
 })
 
-var baseLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+var baseTileUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+var baseLayer = L.tileLayer(baseTileUrl, {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map)
 
@@ -207,12 +208,8 @@ function bindPopup (layer) {
 
   layer.on('popupopen', function (event) {
     var input = event.popup._container.querySelector('.popup-input')
-    input.setSelectionRange(0, input.value.length)
     input.focus()
   })
-
-  // layer.on('popupclose', function (event) {
-  // })
 }
 
 var drawnItems = new L.geoJson(null, {
@@ -267,6 +264,17 @@ d3.select('#slider').on('input', function () {
 d3.select('#items').on('change', function () {
   var id = this.options[this.selectedIndex].value
   getItem(ORGANIZATION_ID, id)
+})
+
+d3.select('#load-tiles').on('click', function () {
+  var tileUrl = document.getElementById('tile-url').value
+
+  if (tileUrl) {
+    baseLayer.setUrl(tileUrl)
+  } else {
+    // Reset to original tile URL
+    baseLayer.setUrl(baseTileUrl)
+  }
 })
 
 d3.select('#save').on('click', function () {
