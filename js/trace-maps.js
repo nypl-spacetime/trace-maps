@@ -18,6 +18,8 @@ var elements = {
   oauth: document.getElementById('oauth')
 }
 
+var MAX_ZOOM = 19
+
 var geojsonStyle = {
   color: '#ff7800',
   weight: 5,
@@ -119,7 +121,9 @@ function getItem (organizationId, id) {
       }
 
       if (!mapwarperLayer) {
-        mapwarperLayer = L.tileLayer(selectedItem.data.tileUrl).addTo(map)
+        mapwarperLayer = L.tileLayer(selectedItem.data.tileUrl, {
+          maxZoom: MAX_ZOOM
+        }).addTo(map)
       } else {
         mapwarperLayer.setUrl(selectedItem.data.tileUrl)
       }
@@ -151,11 +155,12 @@ var map = L.map('map', {
   center: [40.8, -73.96],
   zoom: 14,
   minZoom: 9,
-  maxZoom: 18
+  maxZoom: MAX_ZOOM
 })
 
 var baseTileUrl = 'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
 var baseLayer = L.tileLayer(baseTileUrl, {
+  maxZoom: MAX_ZOOM,
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://carto.com/attributions">CARTO</a>'
 }).addTo(map)
 
